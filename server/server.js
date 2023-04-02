@@ -7,8 +7,16 @@ const { resolvers, typeDefs } = require ('./schemas');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const server = new ApolloServer({resolvers, typeDefs, context: authMiddleware,});
-app.use(express.urlencoded({ extended: false }));
+
+const startApolloServer = async() => { const server = new ApolloServer({ typeDefs, resolvers, context: authMiddleware,});
+ await server.start();
+                                                            server.applyMiddleware({ app });
+                                                          }
+
+
+startApolloServer();
+
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // if we're in production, serve client/build as static assets
@@ -17,16 +25,6 @@ if (process.env.NODE_ENV === 'production') {
 
 }
 
-
-app.get('/', (req, res) => {res.sendFile(path.join(__dirname, '../client/build/index.html'));
-});
-
-const startApolloServer = async (resolvers, typeDefs) => { await server.start();
-                                                            server.applyMiddleware({ app });
-                                                          }
-
 db.once('open', () => {
   app.listen(PORT, () => console.log(`🌍 Now listening on localhost:${PORT}`));
 });
-
-startApolloServer(resolvers, typeDefs);
