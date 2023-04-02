@@ -7,4 +7,9 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/googlebooks', {
   useFindAndModify: false,
 });
 
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017', {
+    useUnifiedTopology: true,
+    useNewUrlParser: true
+})
+
 module.exports = mongoose.connection;
